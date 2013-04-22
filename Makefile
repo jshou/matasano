@@ -1,6 +1,6 @@
 export CC = gcc
-export CFLAGS =
-export LDFLAGS = -I *.h
+export CFLAGS = `pkg-config --cflags glib-2.0`
+export LDFLAGS = `pkg-config --libs glib-2.0`
 
 all: round1-build
 
@@ -8,4 +8,4 @@ round1-build:
 	cd round1 && $(MAKE)
 
 %.o: %.c
-	$(CC) $(CFLAGS) $(INCLUDE) $(DEFINES) -c $< -o $@
+	$(CC) $(CFLAGS) $(LDFLAGS) -c $< -o $@
