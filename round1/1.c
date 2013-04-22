@@ -10,5 +10,10 @@ void main() {
 
   gchar *output = g_base64_encode(byteString, length/2);
 
-  printf("%s", output);
+  printf("%s\n", output);
+
+  guchar *byteString2 = g_base64_decode(output, (gsize *) malloc(40));
+  char *hexString2 = (char*) malloc(length);
+  byteToHex(byteString2, hexString2);
+  printf("%s\n", hexString2);
 }
