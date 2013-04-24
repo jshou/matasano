@@ -18,8 +18,7 @@ void main() {
   char *bestMessage = malloc(length);
   char *currentMessage = malloc(length);
 
-  for(int i = 0; i < CHAR_MAX; i++) {
-    char key = (char) i;
+  for(char key = 0; key < CHAR_MAX; key++) {
     decode(ciphertext, currentMessage, length, key);
 
     float currentScore = eval(currentMessage, length);
