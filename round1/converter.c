@@ -11,12 +11,11 @@ void hexToByte(char* hexString, char* byteString) {
   byteString[length] = 0;
 }
 
-void byteToHex(char* byteString, char* hexString) {
-  int length = strlen(byteString) * 2;
-  for (int i = 0; i < length; i += 2) {
+void byteToHex(char* byteString, char* hexString, int byteLength) {
+  for (int i = 0; i < byteLength*2; i += 2) {
     sprintf(&hexString[i], "%2x", (unsigned int) *byteString);
     byteString++;
   }
 
-  hexString[length] = 0;
+  hexString[byteLength*2] = 0;
 }

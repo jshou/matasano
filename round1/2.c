@@ -21,7 +21,7 @@ void main() {
     byteOutput[i] = byteA[i] ^ byteB[i];
   }
 
-  byteToHex(byteOutput, output);
+  byteToHex(byteOutput, output, length/2);
 
   printf("%s\n", output);
 }

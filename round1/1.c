@@ -15,6 +15,6 @@ void main() {
 
   guchar *byteString2 = g_base64_decode(output, (gsize *) malloc(40));
   char *hexString2 = (char*) malloc(length);
-  byteToHex(byteString2, hexString2);
+  byteToHex(byteString2, hexString2, length/2);
   printf("%s\n", hexString2);
 }
