@@ -1,10 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <limits.h>
+#include <ctype.h>
 #include "converter.h"
 
 void decode(char *ciphertext, char *message, int length, char key);
-float eval(char *message, int length);
+int eval(char *message, int length);
 
 void main() {
   char *cipherhex = "1b37373331363f78151b7f2b783431333d78397828372d363c78373e783a393b3736";
@@ -13,21 +14,25 @@ void main() {
 
   hexToByte(cipherhex, ciphertext);
 
-  float bestScore;
-  char bestKey;
+  int bestScore;
+  int bestKey;
   char *bestMessage = malloc(length);
   char *currentMessage = malloc(length);
 
-  for(char key = 0; key < CHAR_MAX; key++) {
-    decode(ciphertext, currentMessage, length, key);
+  for(int key = 0; key < 256; key++) {
+    decode(ciphertext, currentMessage, length, (char) key); // key is 88
 
-    float currentScore = eval(currentMessage, length);
-    if (currentScore > bestScore) {
+    int currentScore = eval(currentMessage, length);
+
+    if (currentScore >= bestScore) {
+      bestKey = key;
       bestScore = currentScore;
-      bestMessage = currentMessage;
+      strcpy(bestMessage, currentMessage);
     }
   }
 
+  printf("%d ", bestKey);
+  printf("%d ", bestScore);
   printf("%s\n", bestMessage);
 }
 
@@ -37,11 +42,13 @@ void decode(char *ciphertext, char *plaintext, int length, char key) {
   }
 }
 
-float eval(char *message, int length) {
-  float count;
+int eval(char *message, int length) {
+  int count = 0;
 
   for(int i = 0; i < length; i++) {
-    if (message[i] == 'e') {
+    if (!isalnum(message[i]) && !isspace(message[i]) && !(message[i] == '\'')) {
+      return 0;
+    } else if (message[i] == 'e' || message[i] == 'E' || message[i] == 's' || message[i] == 'S') {
       count++;
     }
   }
