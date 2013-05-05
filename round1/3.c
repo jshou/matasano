@@ -25,7 +25,7 @@ void main() {
   for(int key = 0; key < 256; key++) {
     decode(ciphertext, currentMessage, length, (char) key); // key is 88
 
-    int currentScore = eval(currentMessage, length);
+    float currentScore = eval(currentMessage, length);
 
     if (currentScore >= bestScore) {
       bestKey = key;
