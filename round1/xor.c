@@ -63,7 +63,7 @@ int get_ngram_key(char *ngram, int length) {
   int key = 0;
 
   for (int i = 0; i < length; i++) {
-    key += ngram[i - 'a'] * pow(26, i);
+    key += ngram[i - 'a'] * pow(26, length - i);
   }
 
   return key;
