@@ -5,7 +5,9 @@
 #include "converter.h"
 
 void decode(char *ciphertext, char *message, int length, char key);
-int eval(char *message, int length);
+float eval(char *message, int length);
+void get_vector(char *message, float vector[], int length);
+float cosin_sim(float a[], float b[]);
 
 void main() {
   char *cipherhex = "1b37373331363f78151b7f2b783431333d78397828372d363c78373e783a393b3736";
@@ -14,7 +16,7 @@ void main() {
 
   hexToByte(cipherhex, ciphertext);
 
-  int bestScore;
+  float bestScore;
   int bestKey;
   char *bestMessage = malloc(length);
   char *currentMessage = malloc(length);
@@ -31,9 +33,9 @@ void main() {
     }
   }
 
-  printf("%d ", bestKey);
-  printf("%d ", bestScore);
-  printf("%s\n", bestMessage);
+  printf("best key: %d ", bestKey);
+  printf("best score: %.2f ", bestScore);
+  printf("best message: %s\n", bestMessage);
 }
 
 void decode(char *ciphertext, char *plaintext, int length, char key) {
@@ -42,16 +44,56 @@ void decode(char *ciphertext, char *plaintext, int length, char key) {
   }
 }
 
-int eval(char *message, int length) {
-  int count = 0;
+float english[] = {
+  8.167,
+  1.492,
+  2.782,
+  4.253,
+  12.702,
+  2.228,
+  2.015,
+  6.094,
+  6.966,
+  0.153,
+  0.772,
+  4.025,
+  2.406,
+  6.749,
+  7.507,
+  1.929,
+  0.095,
+  5.987,
+  6.327,
+  9.056,
+  2.758,
+  0.978,
+  2.36,
+  0.15,
+  1.974,
+  0.074
+};
 
-  for(int i = 0; i < length; i++) {
-    if (!isalnum(message[i]) && !isspace(message[i]) && !(message[i] == '\'')) {
-      return 0;
-    } else if (message[i] == 'e' || message[i] == 'E' || message[i] == 's' || message[i] == 'S') {
-      count++;
+float eval(char *message, int length) {
+  float vector[26] = {0.0};
+
+  get_vector(message, vector, length);
+  return cosin_sim(english, vector);
+}
+
+void get_vector(char *message, float vector[], int length) {
+  for (int i = 0; i < length; i++) {
+    char c = tolower(message[i]);
+    if (isalpha(c)) {
+      vector[c - 'a']++;
     }
   }
 
-  return count;
+  for (int i = 0; i < 26; i++) {
+    vector[i] /= (float) length;
+    vector[i] *= 100.0; // percentage
+  }
+}
+
+float cosin_sim(float a[], float b[]) {
+  return 1.0;
 }
