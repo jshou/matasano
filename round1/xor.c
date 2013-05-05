@@ -56,6 +56,16 @@ void get_vector(char *message, float vector[], int length) {
   }
 }
 
+int get_ngram_key(char *ngram, int length) {
+  int key = 0;
+
+  for (int i = 0; i < length; i++) {
+    key += ngram[i - 'a'] * pow(26, i);
+  }
+
+  return key;
+}
+
 float cosin_sim(float a[], float b[], int length) {
   float numerator = 0.0;
   float sum_a = 0.0;
