@@ -36,10 +36,13 @@ float english[] = {
 };
 
 float eval(char *message, int length) {
-  float vector[26] = {0.0};
+  int n = 1;
+  int combinations = pow(26, n);
+  float vector[combinations];
+  for (int i = 0; i < combinations; i++) { vector[i] = 0.0; }
 
   get_vector(message, vector, length);
-  return cosin_sim(english, vector, 26);
+  return cosin_sim(english, vector, combinations);
 }
 
 void get_vector(char *message, float vector[], int length) {
