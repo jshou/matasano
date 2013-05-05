@@ -2,12 +2,13 @@
 #include <stdlib.h>
 #include <limits.h>
 #include <ctype.h>
+#include <math.h>
 #include "converter.h"
 
 void decode(char *ciphertext, char *message, int length, char key);
 float eval(char *message, int length);
 void get_vector(char *message, float vector[], int length);
-float cosin_sim(float a[], float b[]);
+float cosin_sim(float a[], float b[], int length);
 
 void main() {
   char *cipherhex = "1b37373331363f78151b7f2b783431333d78397828372d363c78373e783a393b3736";
@@ -31,6 +32,11 @@ void main() {
       bestScore = currentScore;
       strcpy(bestMessage, currentMessage);
     }
+
+
+    printf("key: %d ", key);
+    printf("score: %.2f ", currentScore);
+    printf("message: %s\n", currentMessage);
   }
 
   printf("best key: %d ", bestKey);
@@ -77,7 +83,7 @@ float eval(char *message, int length) {
   float vector[26] = {0.0};
 
   get_vector(message, vector, length);
-  return cosin_sim(english, vector);
+  return cosin_sim(english, vector, 26);
 }
 
 void get_vector(char *message, float vector[], int length) {
@@ -94,6 +100,22 @@ void get_vector(char *message, float vector[], int length) {
   }
 }
 
-float cosin_sim(float a[], float b[]) {
-  return 1.0;
+float cosin_sim(float a[], float b[], int length) {
+  float numerator = 0.0;
+  float sum_a = 0.0;
+  float sum_b = 0.0;
+
+  for (int i = 0; i < length; i++) {
+    numerator += a[i] * b[i];
+    sum_a += a[i] * a[i];
+    sum_b += b[i] * b[i];
+  }
+
+  float denom = sqrtf(sum_a) * sqrtf(sum_b);
+
+  if (denom) {
+    return numerator / denom;
+  } else {
+    return 0.0;
+  }
 }
