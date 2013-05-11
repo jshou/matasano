@@ -1,4 +1,5 @@
 #include "xor.h"
+#include "eval.h"
 
 void main() {
   char *cipherhex = "1b37373331363f78151b7f2b783431333d78397828372d363c78373e783a393b3736";
@@ -13,7 +14,7 @@ void main() {
   char *currentMessage = malloc(length);
 
   for(int key = 0; key < 256; key++) {
-    decode(ciphertext, currentMessage, length, (char) key); // key is 88
+    xor_decode(ciphertext, currentMessage, length, (char) key); // key is 88
 
     float currentScore = eval(currentMessage, length);
 
