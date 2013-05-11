@@ -1,5 +1,19 @@
 #include "eval.h"
 
+float count_eval(char *message, int length) {
+  float count = 0.0;
+
+  for (int i = 0; i < length; i++) {
+    char c = message[i];
+
+    if (c == ' ' || c == 'e') {
+      count++;
+    }
+  }
+
+  return count;
+}
+
 float english[] = {
   8.167,
   1.492,

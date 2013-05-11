@@ -16,7 +16,7 @@ void main() {
   for(int key = 0; key < 256; key++) {
     xor_decode(ciphertext, currentMessage, length, (char) key); // key is 88
 
-    float currentScore = eval(currentMessage, length);
+    float currentScore = count_eval(currentMessage, length);
 
     if (currentScore >= bestScore) {
       bestKey = key;
