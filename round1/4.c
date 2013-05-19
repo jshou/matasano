@@ -5,33 +5,31 @@
 
 int main() {
   size_t n = sizeof(char) * 60;
-  int messageLength = n / 2;
+  int messageLength = n/2;
   char *lineptr = malloc(n);
 
+  float currentScore;
+  float bestScore;
+  char *currentMessage = malloc(messageLength);
+  char *bestMessage = malloc(messageLength);
   int currentIndex = 0;
+  int messageIndex = 0;
 
   while(getline(&lineptr, &n, stdin) != -1) {
-    // try all keys for this line
-    float lineScore;
-    float lineBest;
-    char *lineMessage = malloc(messageLength);
-    char *bestLineMessage = malloc(messageLength);
-
     for (int key = 0; key < 256; key++) {
-      xor_decode(lineptr, lineMessage, messageLength, (char) key);
-      float lineScore = cosin_sim_freq_eval(lineMessage, messageLength);
+      xor_decode(lineptr, currentMessage, messageLength, (char) key);
+      float currentScore = count_eval(currentMessage, messageLength);
 
-      if (lineScore > lineBest) {
-        lineBest = lineScore;
-        strcpy(bestLineMessage, lineMessage);
+      if (currentScore > bestScore) {
+        bestScore = currentScore;
+        strcpy(bestMessage, currentMessage);
+        messageIndex = currentIndex;
       }
     }
 
-    printf("current best message: %d: %s\n", currentIndex, bestLineMessage);
-
-    free(lineMessage);
-    free(bestLineMessage);
-
     currentIndex++;
   }
+
+  printf("best score: %.2f\n", bestScore);
+  printf("best message: %d: %s\n", messageIndex, bestMessage);
 }
