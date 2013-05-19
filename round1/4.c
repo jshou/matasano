@@ -19,7 +19,8 @@ int main() {
   while(getline(&lineptr, &n, stdin) != -1) {
     for (int key = 0; key < 256; key++) {
       hexToByte(lineptr, ciphertext);
-      xor_decode(ciphertext, currentMessage, messageLength, (char) key);
+      char charkey = (char) key;
+      xor_decode(ciphertext, currentMessage, messageLength, &charkey, 1);
       float currentScore = count_eval(currentMessage, messageLength);
 
       if (currentScore > bestScore) {

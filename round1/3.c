@@ -14,7 +14,8 @@ void main() {
   char *currentMessage = malloc(length);
 
   for(int key = 0; key < 256; key++) {
-    xor_decode(ciphertext, currentMessage, length, (char) key); // key is 88
+    char charkey = (char) key;
+    xor_decode(ciphertext, currentMessage, length, &charkey, 1); // key is 88
 
     float currentScore = count_eval(currentMessage, length);
 
