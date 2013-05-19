@@ -7,6 +7,7 @@ int main() {
   size_t n = sizeof(char) * 60;
   int messageLength = n/2;
   char *lineptr = malloc(n);
+  char *ciphertext = malloc(messageLength);
 
   float currentScore;
   float bestScore;
@@ -17,7 +18,8 @@ int main() {
 
   while(getline(&lineptr, &n, stdin) != -1) {
     for (int key = 0; key < 256; key++) {
-      xor_decode(lineptr, currentMessage, messageLength, (char) key);
+      hexToByte(lineptr, ciphertext);
+      xor_decode(ciphertext, currentMessage, messageLength, (char) key);
       float currentScore = count_eval(currentMessage, messageLength);
 
       if (currentScore > bestScore) {
