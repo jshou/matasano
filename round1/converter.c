@@ -10,7 +10,7 @@ void hexToByte(char* hexString, char* byteString) {
 
 void byteToHex(char* byteString, char* hexString, int byteLength) {
   for (int i = 0; i < byteLength*2; i += 2) {
-    sprintf(&hexString[i], "%2x", (unsigned int) *byteString);
+    sprintf(&hexString[i], "%02x", (unsigned int) *byteString);
     byteString++;
   }
 

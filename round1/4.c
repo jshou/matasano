@@ -1,6 +1,7 @@
 #define _GNU_SOURCE
 #include "xor.h"
 #include "eval.h"
+#include "converter.h"
 #include <stdio.h>
 
 int main() {
