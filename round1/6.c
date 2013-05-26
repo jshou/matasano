@@ -19,6 +19,16 @@ int main() {
   int key_size = best_key_size(ciphertext);
 
   // transpose blocks
+  int num_blocks = strlen(ciphertext) / key_size;
+  char *blocks[num_blocks];
+  for (int i = 0; i < num_blocks; i++) {
+    char *current_block = blocks[i];
+    current_block = malloc(key_size);
+
+    for (int j = 0; j < key_size; j++) {
+      current_block[j] = ciphertext[i * key_size + j];
+    }
+  }
 }
 
 int best_key_size(char *input) {
