@@ -48,5 +48,8 @@ float normalized_edit_distance(char *input, int keysize) {
   }
 
   int distance = hamming_distance(first, second, keysize);
+  free(first);
+  free(second);
+
   return ((float) distance) / ((float) keysize);
 }
