@@ -21,29 +21,29 @@ int main() {
   int key_size = best_key_size(ciphertext);
 
   // transpose blocks
-  int num_blocks = length / key_size;
-  char *blocks[num_blocks];
-  for (int i = 0; i < num_blocks; i++) {
+  int block_size = length / key_size;
+  char *blocks[key_size];
+  for (int i = 0; i < key_size; i++) {
     char *current_block = blocks[i];
-    current_block = malloc(key_size);
+    current_block = malloc(block_size);
 
-    for (int j = 0; j < key_size; j++) {
-      current_block[j] = ciphertext[i * key_size + j];
+    for (int j = 0; j < block_size; j++) {
+      current_block[j] = ciphertext[i * block_size + j];
     }
   }
 
   // solve each block
   char *key = malloc(key_size);
-  for (int i = 0; i < num_blocks; i++) {
+  for (int i = 0; i < key_size; i++) {
     char *current_block = blocks[i];
     char best_key_section;
     float best_score;
 
     for(int k = 0; k < 256; k++) {
-      char *msg = malloc(key_size);
+      char *msg = malloc(block_size);
       char c = (char) k;
-      xor_decode(current_block, msg, key_size, &c, 1);
-      float current_score = count_eval(msg, key_size);
+      xor_decode(current_block, msg, block_size, &c, 1);
+      float current_score = count_eval(msg, block_size);
 
       if (current_score > best_score) {
         best_score = current_score;
