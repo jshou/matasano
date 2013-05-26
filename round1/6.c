@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <limits.h>
 #include "xor.h"
+#include "eval.h"
 #include "6.h"
 
 int best_key_size(char *input);
@@ -12,14 +13,15 @@ float normalized_edit_distance(char *input, int keysize);
 
 int main() {
   // decode ciphertext
-  gsize length;
-  guchar *ciphertext = g_base64_decode(MY_INPUT, &length);
+  gsize l;
+  guchar *ciphertext = g_base64_decode(MY_INPUT, &l);
+  int length = strlen(ciphertext);
 
   // get key size
   int key_size = best_key_size(ciphertext);
 
   // transpose blocks
-  int num_blocks = strlen(ciphertext) / key_size;
+  int num_blocks = length / key_size;
   char *blocks[num_blocks];
   for (int i = 0; i < num_blocks; i++) {
     char *current_block = blocks[i];
@@ -29,6 +31,36 @@ int main() {
       current_block[j] = ciphertext[i * key_size + j];
     }
   }
+
+  // solve each block
+  char *key = malloc(key_size);
+  for (int i = 0; i < num_blocks; i++) {
+    char *current_block = blocks[i];
+    char best_key_section;
+    float best_score;
+
+    for(int k = 0; k < 256; k++) {
+      char *msg = malloc(key_size);
+      char c = (char) k;
+      xor_decode(current_block, msg, key_size, &c, 1);
+      float current_score = count_eval(msg, key_size);
+
+      if (current_score > best_score) {
+        best_score = current_score;
+        best_key_section = k;
+      }
+
+      free(msg);
+    }
+
+    key[i] = best_key_section;
+  }
+
+  char *plaintext = malloc(length);
+  xor_decode(ciphertext, plaintext, length, key, key_size);
+
+  printf("key: %s\n", key);
+  printf("msg: %s\n", plaintext);
 }
 
 int best_key_size(char *input) {
