@@ -18,7 +18,7 @@ int main() {
   guchar *ciphertext = g_base64_decode(MY_INPUT, &length);
 
   // get key size
-  int key_size = best_key_size(ciphertext);
+  int key_size = best_key_size(ciphertext); // TODO: try top 3 key sizes
 
   // transpose blocks
   int block_size = length / key_size;
