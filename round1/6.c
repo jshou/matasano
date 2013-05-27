@@ -37,21 +37,9 @@ int main() {
       block_size = length % key_size;
     }
 
-    for(int k = 0; k < 256; k++) {
-      char *msg = malloc(block_size);
-      char c = (char) k;
-      xor_decode(current_block, msg, block_size, &c, 1);
-      float current_score = count_eval(msg, block_size);
-
-      if (current_score > best_score) {
-        best_score = current_score;
-        best_key_section = k;
-      }
-
-      free(msg);
-    }
-
-    key[i] = best_key_section;
+    char *message = malloc(block_size);
+    key[i] = xor_best_key(current_block, message, block_size, &count_eval);
+    free(message);
   }
 
   char *plaintext = malloc(length);
