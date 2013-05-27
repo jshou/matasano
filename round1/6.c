@@ -14,9 +14,8 @@ void transpose_blocks(char **blocks, int key_size, int block_size, char *ciphert
 
 int main() {
   // decode ciphertext
-  gsize l;
-  guchar *ciphertext = g_base64_decode(MY_INPUT, &l);
-  int length = strlen(ciphertext);
+  gsize length;
+  guchar *ciphertext = g_base64_decode(MY_INPUT, &length);
 
   // get key size
   int key_size = best_key_size(ciphertext);
