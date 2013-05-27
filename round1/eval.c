@@ -7,7 +7,7 @@ float count_eval(char *message, int length) {
     char c = message[i];
 
     if (c == ' ' || c == 'e') {
-      count++;
+      count += 1.0;
     }
   }
 
