@@ -56,8 +56,6 @@ int best_key_size(char *input) {
     }
   }
 
-  // printf("best edit dist: %.03f\n", best_edit_distance);
-
   return best_key_size;
 }
 
