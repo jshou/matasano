@@ -10,7 +10,7 @@
 
 int best_key_size(char *input);
 float normalized_edit_distance(char *input, int keysize);
-void transpose_blocks(char *blocks[], int key_size, int block_size, char *ciphertext, int length);
+void transpose_blocks(char **blocks, int key_size, int block_size, char *ciphertext, int length);
 
 int main() {
   // decode ciphertext
@@ -23,20 +23,18 @@ int main() {
 
   // transpose blocks
   int block_size = length / key_size;
-  char *blocks[key_size];
+  char **blocks = malloc(sizeof(char*) * key_size);
   transpose_blocks(blocks, key_size, block_size, ciphertext, length);
 
   // solve each block
   char *key = malloc(key_size);
   for (int i = 0; i < key_size; i++) {
-    char *current_block = blocks[i];
-
     if (i == key_size - 1) {
       block_size = length % key_size;
     }
 
     char *message = malloc(block_size);
-    key[i] = xor_best_key(current_block, message, block_size, &count_eval);
+    key[i] = xor_best_key(blocks[i], message, block_size, &count_eval);
     free(message);
   }
 
@@ -59,6 +57,8 @@ int best_key_size(char *input) {
     }
   }
 
+  // printf("best edit dist: %.03f\n", best_edit_distance);
+
   return best_key_size;
 }
 
@@ -80,15 +80,14 @@ float normalized_edit_distance(char *input, int keysize) {
   return ((float) distance) / ((float) keysize);
 }
 
-void transpose_blocks(char *blocks[], int key_size, int block_size, char *ciphertext, int length) {
+void transpose_blocks(char **blocks, int key_size, int block_size, char *ciphertext, int length) {
   for (int offset = 0; offset < key_size; offset++) {
-    char *current_block = blocks[offset];
-    current_block = malloc(block_size);
+    char *current_block = blocks[offset] = malloc(block_size);
 
     for (int j = 0; j < block_size; j++) {
       int index = j * block_size + offset;
-      if (index > length) { break; }
+      if (index > length - 1) { break; }
       current_block[j] = ciphertext[index];
     }
   }
-};
+}
