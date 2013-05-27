@@ -34,7 +34,7 @@ char xor_best_key(char *ciphertext,
 
     float currentScore = eval_func(currentMessage, length);
 
-    if (currentScore >= bestScore) {
+    if (currentScore > bestScore) {
       bestKey = key;
       bestScore = currentScore;
       strncpy(message, currentMessage, length);
