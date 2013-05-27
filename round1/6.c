@@ -30,8 +30,6 @@ int main() {
   char *key = malloc(key_size);
   for (int i = 0; i < key_size; i++) {
     char *current_block = blocks[i];
-    char best_key_section;
-    float best_score;
 
     if (i == key_size - 1) {
       block_size = length % key_size;
