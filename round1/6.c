@@ -41,6 +41,10 @@ int main() {
     char best_key_section;
     float best_score;
 
+    if (i == key_size - 1) {
+      block_size = length % key_size;
+    }
+
     for(int k = 0; k < 256; k++) {
       char *msg = malloc(block_size);
       char c = (char) k;
