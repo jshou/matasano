@@ -62,19 +62,33 @@ int best_key_size(char *input) {
 // the following function assumes twice keysize is smaller than strlen(input)
 float normalized_edit_distance(char *input, int keysize) {
   // initialize blocks
-  char *first = malloc(keysize);
-  char *second = malloc(keysize);
+  int num_blocks = 4;
+  char **blocks = malloc(sizeof(char*) * num_blocks);
 
   for (int i = 0; i < keysize; i++) {
-    first[i] = input[i];
-    second[i] = input[keysize + i];
+    for (int j = 0; j < num_blocks; j++) {
+      char *curr_block = blocks[j] = malloc(keysize);
+      curr_block[i] = input[j*keysize + i];
+    }
   }
 
-  int distance = hamming_distance(first, second, keysize);
-  free(first);
-  free(second);
+  // get average distances
+  int numerator = 0;
+  for (int i = 0; i < num_blocks; i++) {
+    for (int j = 0; j < i; j++) {
+      numerator += hamming_distance(blocks[i], blocks[j], keysize);
+    }
+  }
+  float avg_dist = ((float) numerator) / ((float) num_blocks * (num_blocks + 1) / 2);
 
-  return ((float) distance) / ((float) keysize);
+  // free the blocks
+  for (int i = 0; i < num_blocks; i++) {
+    free(blocks[i]);
+  }
+  free(blocks);
+
+  // normalize by keysize
+  return ((float) avg_dist) / ((float) keysize);
 }
 
 void transpose_blocks(char **blocks, int key_size, int block_size, char *ciphertext, int length) {
