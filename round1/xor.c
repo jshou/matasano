@@ -8,7 +8,7 @@ void xor_decode(char *ciphertext, char *plaintext, int length, char *key, int ke
   }
 }
 
-int hamming_distance(char *a, char*b, int length) {
+int hamming_distance(char *a, char *b, int length) {
   int distance = 0;
 
   for(int i = 0; i < length; i++) {
@@ -37,7 +37,7 @@ char xor_best_key(char *ciphertext,
     if (currentScore >= bestScore) {
       bestKey = key;
       bestScore = currentScore;
-      strcpy(message, currentMessage);
+      strncpy(message, currentMessage, length);
     }
   }
 
