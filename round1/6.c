@@ -23,12 +23,14 @@ int main() {
   // transpose blocks
   int block_size = length / key_size;
   char *blocks[key_size];
-  for (int i = 0; i < key_size; i++) {
-    char *current_block = blocks[i];
+  for (int offset = 0; offset < key_size; offset++) {
+    char *current_block = blocks[offset];
     current_block = malloc(block_size);
 
     for (int j = 0; j < block_size; j++) {
-      current_block[j] = ciphertext[i * block_size + j];
+      int index = j * block_size + offset;
+      if (index > length) { break; }
+      current_block[j] = ciphertext[index];
     }
   }
 
