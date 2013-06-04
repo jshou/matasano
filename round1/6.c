@@ -32,18 +32,17 @@ int main() {
     // solve each block
     char *key = malloc(key_size);
     for (int i = 0; i < key_size; i++) {
-      if (i == key_size - 1) {
-        block_size = length % key_size;
-      }
+      int block_length = (i * block_size > length) ? block_size - 1 : block_size;
 
       char *message = malloc(block_size);
-      key[i] = xor_best_key(blocks[i], message, block_size, &count_eval);
+      key[i] = xor_best_key(blocks[i], message, block_length, &count_eval);
       free(message);
     }
 
     char *plaintext = malloc(length);
     xor_decode(ciphertext, plaintext, length, key, key_size);
 
+    printf("keysize: %d\n", key_size);
     printf("key: %s\n", key);
     printf("msg: %s\n", plaintext);
   }
