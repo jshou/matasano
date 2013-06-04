@@ -20,30 +20,33 @@ int main() {
   // get key size
   int *key_sizes = malloc(sizeof(int) * 3);
   best_key_size(key_sizes, 3, ciphertext);
-  int key_size = key_sizes[0];
 
-  // transpose blocks
-  int block_size = length / key_size;
-  char **blocks = malloc(sizeof(char*) * key_size);
-  transpose_blocks(blocks, key_size, block_size, ciphertext, length);
+  for (int k = 0; k < 3; k++) {
+    int key_size = key_sizes[k];
 
-  // solve each block
-  char *key = malloc(key_size);
-  for (int i = 0; i < key_size; i++) {
-    if (i == key_size - 1) {
-      block_size = length % key_size;
+    // transpose blocks
+    int block_size = length / key_size;
+    char **blocks = malloc(sizeof(char*) * key_size);
+    transpose_blocks(blocks, key_size, block_size, ciphertext, length);
+
+    // solve each block
+    char *key = malloc(key_size);
+    for (int i = 0; i < key_size; i++) {
+      if (i == key_size - 1) {
+        block_size = length % key_size;
+      }
+
+      char *message = malloc(block_size);
+      key[i] = xor_best_key(blocks[i], message, block_size, &count_eval);
+      free(message);
     }
 
-    char *message = malloc(block_size);
-    key[i] = xor_best_key(blocks[i], message, block_size, &count_eval);
-    free(message);
+    char *plaintext = malloc(length);
+    xor_decode(ciphertext, plaintext, length, key, key_size);
+
+    printf("key: %s\n", key);
+    printf("msg: %s\n", plaintext);
   }
-
-  char *plaintext = malloc(length);
-  xor_decode(ciphertext, plaintext, length, key, key_size);
-
-  printf("key: %s\n", key);
-  printf("msg: %s\n", plaintext);
 }
 
 void best_key_size(int *key_sizes, int num_keys, char *input) {
@@ -58,8 +61,6 @@ void best_key_size(int *key_sizes, int num_keys, char *input) {
     float dist = normalized_edit_distance(input, key_size);
     if (dist < best_edit_distance) {
       best_edit_distance = dist;
-
-      printf("%.2f\n", best_edit_distance);
 
       // shift key sizes
       for (int i = num_keys - 1; i > 0; i--) {
