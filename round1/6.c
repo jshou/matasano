@@ -8,7 +8,7 @@
 #include "eval.h"
 #include "6.h"
 
-int best_key_size(char *input);
+void best_key_size(int *key_sizes, int num_keys, char *input);
 float normalized_edit_distance(char *input, int keysize);
 void transpose_blocks(char **blocks, int key_size, int block_size, char *ciphertext, int length);
 
@@ -18,7 +18,9 @@ int main() {
   guchar *ciphertext = g_base64_decode(MY_INPUT, &length);
 
   // get key size
-  int key_size = best_key_size(ciphertext); // TODO: try top 3 key sizes
+  int *key_sizes = malloc(sizeof(int) * 3);
+  best_key_size(key_sizes, 3, ciphertext);
+  int key_size = key_sizes[0];
 
   // transpose blocks
   int block_size = length / key_size;
@@ -44,25 +46,36 @@ int main() {
   printf("msg: %s\n", plaintext);
 }
 
-int best_key_size(char *input) {
-  int best_key_size = 0;
+void best_key_size(int *key_sizes, int num_keys, char *input) {
+  // max out key_sizes
+  for (int i = 0; i < num_keys; i++) {
+    key_sizes[i] = 0;
+  }
   float best_edit_distance = INT_MAX;
 
+  // iterate over best key sizes
   for (int key_size = 2; key_size <= 40; key_size++) {
     float dist = normalized_edit_distance(input, key_size);
     if (dist < best_edit_distance) {
       best_edit_distance = dist;
-      best_key_size = key_size;
+
+      printf("%.2f\n", best_edit_distance);
+
+      // shift key sizes
+      for (int i = num_keys - 1; i > 0; i--) {
+        key_sizes[i] = key_sizes[i-1];
+      }
+
+      // save best key size
+      key_sizes[0] = key_size;
     }
   }
-
-  return best_key_size;
 }
 
 // the following function assumes twice keysize is smaller than strlen(input)
 float normalized_edit_distance(char *input, int keysize) {
   // initialize blocks
-  int num_blocks = 4;
+  int num_blocks = 2;
   char **blocks = malloc(sizeof(char*) * num_blocks);
 
   for (int i = 0; i < keysize; i++) {
