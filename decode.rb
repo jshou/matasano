@@ -15,4 +15,9 @@ class XorDecoder
 
     a.split('').zip(b.split('')).count {|x, y| x != y}
   end
+
+  private
+  def eval(s)
+    s.downcase.count {|c| [' ', 's', 'e'].include? c}
+  end
 end
