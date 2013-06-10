@@ -1,4 +1,5 @@
 require 'pry'
+require 'base64'
 
 class XorDecoder
   def self.decode(ciphertext, key)
@@ -33,8 +34,27 @@ class XorDecoder
     end
   end
 
-  private
   def self.eval(s)
-    s.downcase.count {|c| [' ', 's', 'e'].include? c}
+    s.downcase.split('').count {|c| [' ', 's', 'e'].include? c}
+  end
+end
+
+if __FILE__ == $0
+  bytes = open('input').readlines.map(&:strip).join
+  cipher = Base64.decode64(bytes)
+
+  (2..40).each do |keysize|
+    blocks = XorDecoder.key_blocks(cipher, keysize)
+
+    key = blocks.map do |block|
+      (0..255).map do |k|
+        {key: k.chr, score: XorDecoder.eval(XorDecoder.decode(block, k.chr))}
+      end.max do |a, b|
+        a[:score] <=> b[:score]
+      end
+    end.map{|h| h[:key]}.join
+
+    puts "key: #{key}"
+    puts "msg: #{XorDecoder.decode(cipher, key)}"
   end
 end
