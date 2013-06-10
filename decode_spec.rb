@@ -1,7 +1,7 @@
 require './decode'
 
 describe XorDecoder do
-  describe '#decode' do
+  describe '.decode' do
     it 'decodes correctly' do
       msg = "Burning 'em, if you ain't quick and nimble\nI go crazy when I hear a cymbal"
       enc = XorDecoder.decode(msg, 'ICE')
@@ -9,7 +9,7 @@ describe XorDecoder do
     end
   end
 
-  describe '#hamming' do
+  describe '.hamming' do
     it 'calculates the right hamming distance' do
       a = 'this is a test'
       b = 'wokka wokka!!t'
@@ -22,10 +22,19 @@ describe XorDecoder do
     end
   end
 
-  describe '#top_n_key_sizes' do
+  describe '.top_n_key_sizes' do
   end
 
-  describe '#transpose' do
+  describe '.key_blocks' do
+    it 'divides string into char-staggered blocks based on key size' do
+      a = 'abcdefghi'
+      expect(XorDecoder.key_blocks(a, 3)).to eq(['adg', 'beh', 'cfi'])
+    end
+
+    it "makes the later blocks shorter if the string doesn't divide evenly" do
+      a = 'abcdefg'
+      expect(XorDecoder.key_blocks(a, 3)).to eq(['adg', 'be', 'cf'])
+    end
   end
 
   def bin_to_hex(s)
