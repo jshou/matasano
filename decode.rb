@@ -9,4 +9,10 @@ class XorDecoder
 
     plaintext
   end
+
+  def self.hamming(a, b)
+    raise 'both strings must have equal length' if a.length != b.length
+
+    a.split('').zip(b.split('')).count {|x, y| x != y}
+  end
 end

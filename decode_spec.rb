@@ -9,6 +9,19 @@ describe XorDecoder do
     end
   end
 
+  describe '#hamming' do
+    it 'calculates the right hamming distance' do
+      a = 'this is a test'
+      b = 'wokka wokka!!t'
+
+      expect(XorDecoder.hamming(a, b)).to eq(13)
+    end
+
+    it 'raises if string lengths are not the same' do
+      lambda { XorDecoder.hamming('asbcsdf', 'f')}.should raise_error
+    end
+  end
+
   describe '#top_n_key_sizes' do
   end
 
