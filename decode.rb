@@ -43,18 +43,41 @@ if __FILE__ == $0
   bytes = open('input').readlines.map(&:strip).join
   cipher = Base64.decode64(bytes)
 
-  (2..40).each do |keysize|
-    blocks = XorDecoder.key_blocks(cipher, keysize)
+  # get best key sizes
+  key_scores = (2..40).map do |k|
+    num_tries = 3
+    blocks = []
+    num_tries.times do |i|
+      blocks << cipher.slice(i*k, k)
+    end
 
-    key = blocks.map do |block|
-      (0..255).map do |k|
-        {key: k.chr, score: XorDecoder.eval(XorDecoder.decode(block, k.chr))}
-      end.max do |a, b|
-        a[:score] <=> b[:score]
+    diffs = []
+    num_tries.times do |i|
+      i.times do |j|
+        diffs << XorDecoder.hamming(blocks[i], blocks[j])
       end
-    end.map{|h| h[:key]}.join
+    end
 
-    puts "key: #{key}"
-    puts "msg: #{XorDecoder.decode(cipher, key)}"
+    score = diffs.reduce(:+) / diffs.length.to_f / k
+
+    {keysize: k, score: score}
   end
+
+  keysize = key_scores.sort do |a,b|
+    a[:score] <=> b[:score]
+  end.first[:keysize]
+
+  blocks = XorDecoder.key_blocks(cipher, keysize)
+
+  key = blocks.map do |block|
+    (0..255).map do |k|
+      {key: k.chr, score: XorDecoder.eval(XorDecoder.decode(block, k.chr))}
+    end.max do |a, b|
+      a[:score] <=> b[:score]
+    end
+  end.map{|h| h[:key]}.join
+
+  puts "keysize: #{keysize}"
+  puts "key: #{key}"
+  puts "msg: #{XorDecoder.decode(cipher, key)}"
 end
