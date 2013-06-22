@@ -6,7 +6,7 @@ float count_eval(char *message, int length) {
   for (int i = 0; i < length; i++) {
     char c = message[i];
 
-    if (c == ' ' || c == 'e' || c == 's') {
+    if (c == ' ' || c == 'e' || c == 't') {
       count += 1.0;
     }
   }
