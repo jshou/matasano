@@ -5,28 +5,12 @@ void main() {
   char *cipherhex = "1b37373331363f78151b7f2b783431333d78397828372d363c78373e783a393b3736";
   int length = strlen(cipherhex) / 2;
   char *ciphertext = malloc(length);
+  char *message = malloc(length);
 
   hexToByte(cipherhex, ciphertext);
 
-  float bestScore;
-  int bestKey;
-  char *bestMessage = malloc(length);
-  char *currentMessage = malloc(length);
-
-  for(int key = 0; key < 256; key++) {
-    char charkey = (char) key;
-    xor_decode(ciphertext, currentMessage, length, &charkey, 1); // key is 88
-
-    float currentScore = count_eval(currentMessage, length);
-
-    if (currentScore >= bestScore) {
-      bestKey = key;
-      bestScore = currentScore;
-      strcpy(bestMessage, currentMessage);
-    }
-  }
+  char bestKey = xor_best_key(ciphertext, message, length, &count_eval);
 
   printf("best key: %d\n", bestKey);
-  printf("best score: %.2f\n", bestScore);
-  printf("best message: %s\n", bestMessage);
+  printf("best message: %s\n", message);
 }
