@@ -25,7 +25,7 @@ char xor_best_key(char *ciphertext,
                   int length,
                   float (*eval_func)(char *msg, int length)) {
   char bestKey;
-  float bestScore;
+  float bestScore = 0.0;
   char *currentMessage = malloc(length);
 
   for(int key = 0; key < 256; key++) {
