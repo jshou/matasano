@@ -8,7 +8,7 @@
 #include "eval.h"
 #include "6.h"
 
-void best_key_size(int *key_sizes, int num_keys, char *input);
+int best_key_size(char *input);
 float normalized_edit_distance(char *input, int keysize);
 void transpose_blocks(char **blocks, int* block_sizes, int key_size, int block_size, char *ciphertext, int length);
 
@@ -18,10 +18,7 @@ int main() {
   guchar *ciphertext = g_base64_decode(MY_INPUT, &length);
 
   // get key size
-  int *key_sizes = malloc(sizeof(int) * 3);
-  best_key_size(key_sizes, 3, ciphertext);
-
-  int key_size = 29;
+  int key_size = best_key_size(ciphertext);
 
   // transpose blocks
   int max_block_size = length / key_size + 1;
@@ -47,11 +44,9 @@ int main() {
   printf("msg: %s\n", plaintext);
 }
 
-void best_key_size(int *key_sizes, int num_keys, char *input) {
+int best_key_size(char *input) {
+  int best_key_size;
   // max out key_sizes
-  for (int i = 0; i < num_keys; i++) {
-    key_sizes[i] = 0;
-  }
   float best_edit_distance = INT_MAX;
 
   // iterate over best key sizes
@@ -60,38 +55,35 @@ void best_key_size(int *key_sizes, int num_keys, char *input) {
     if (dist < best_edit_distance) {
       best_edit_distance = dist;
 
-      // shift key sizes
-      for (int i = num_keys - 1; i > 0; i--) {
-        key_sizes[i] = key_sizes[i-1];
-      }
-
-      // save best key size
-      key_sizes[0] = key_size;
+      best_key_size = key_size;
     }
   }
+
+  return best_key_size;
 }
 
 // the following function assumes twice keysize is smaller than strlen(input)
 float normalized_edit_distance(char *input, int keysize) {
   // initialize blocks
-  int num_blocks = 2;
+  int num_blocks = 3;
   char **blocks = malloc(sizeof(char*) * num_blocks);
 
-  for (int i = 0; i < keysize; i++) {
-    for (int j = 0; j < num_blocks; j++) {
-      char *curr_block = blocks[j] = malloc(keysize);
-      curr_block[i] = input[j*keysize + i];
+  for (int i = 0; i < num_blocks; i++) {
+    char *curr_block = blocks[i] = malloc(keysize);
+    for (int j = 0; j < keysize; j++) {
+      curr_block[j] = input[i*keysize + j];
     }
   }
 
   // get average distances
   int numerator = 0;
+  int denom = 0;
   for (int i = 0; i < num_blocks; i++) {
     for (int j = 0; j < i; j++) {
       numerator += hamming_distance(blocks[i], blocks[j], keysize);
+      denom++;
     }
   }
-  float avg_dist = ((float) numerator) / ((float) num_blocks * (num_blocks + 1) / 2);
 
   // free the blocks
   for (int i = 0; i < num_blocks; i++) {
@@ -99,8 +91,8 @@ float normalized_edit_distance(char *input, int keysize) {
   }
   free(blocks);
 
-  // normalize by keysize
-  return ((float) avg_dist) / ((float) keysize);
+  float score = ((float) numerator) / ((float) denom) / ((float) keysize);
+  return score;
 }
 
 void transpose_blocks(char **blocks, int *block_sizes, int key_size, int max_block_size, char *ciphertext, int length) {
