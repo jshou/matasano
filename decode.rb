@@ -35,7 +35,7 @@ class XorDecoder
   end
 
   def self.eval(s)
-    s.downcase.split('').count {|c| [' ', 's', 'e'].include? c}
+    s.downcase.split('').count {|c| [' ', 't', 'e'].include? c}
   end
 end
 
