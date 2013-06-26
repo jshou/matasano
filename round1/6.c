@@ -28,13 +28,14 @@ int main() {
   transpose_blocks(blocks, block_sizes, key_size, max_block_size, ciphertext, length);
 
   // solve each block
-  char *key = malloc(key_size);
+  char *key = malloc(key_size + 1);
   for (int i = 0; i < key_size; i++) {
 
     char *message = malloc(block_sizes[i]);
     key[i] = xor_best_key(blocks[i], message, block_sizes[i], &count_eval);
     free(message);
   }
+  key[key_size] = '\0';
 
   char *plaintext = malloc(length);
   xor_decode(ciphertext, plaintext, length, key, key_size);
