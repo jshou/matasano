@@ -1,13 +1,24 @@
 #!/usr/bin/env ruby
 
-# fast hamming impl from
-# http://stackoverflow.com/questions/6395165/most-efficient-way-to-calculate-hamming-distance-in-ruby
-def h2(a, b)
-  (a^b).to_s(2).count("1")
+def hamming(a, b)
+  (0...a.length).select do |i|
+    a[i] == b[i]
+  end.length
 end
 
-def avg_hamming(blocks)
-  1
+def avg_hamming(string)
+  num_blocks = string.length / 16
+  comparisons = 0
+  hammings = 0
+
+  num_blocks.times do |i|
+    i.times do |j|
+      comparisons += 1
+      hammings += hamming(string[i, 16], string[j, 16])
+    end
+  end
+
+  hammings.to_f / comparisons
 end
 
 best_line = 0
